@@ -102,7 +102,7 @@ userSchema.methods.generateToken = function(cb) {
  * 2. 
  *  
  */
-userSchema.methods.findByToken = function(token, cb) {
+userSchema.statics.findByToken = function(token, cb) {
     var user = this;
 
     jwt.verify(token, config.encodeKEY, function(err, decoded) {

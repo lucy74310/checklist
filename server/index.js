@@ -14,8 +14,9 @@ app.use(bodyParser.json())
 // token 정보 쿠키에 저장하기 위해
 app.use(cookieParser())
 
-
 const config = require('./config/key')
+
+const routes = require('./server/routes')
 
 /**
  * GET : 가져오는거
@@ -23,10 +24,6 @@ const config = require('./config/key')
  * POST : 새로생성하는거 
  * DELETE : 삭제
  */
-app.get('/', (req, res) => {
-    res.send('Hello World!~~안녕하세요~ggg')
-})
-
 app.get('/test', (req, res) => {
     res.send('Hello World!~~안녕하세요~')
 })
@@ -91,7 +88,7 @@ app.post('/api/users/login', (req, res) => {
         // 3. 비밀번호도 맞다면, 토큰을 생성하기
         user.generateToken((err, user) => {
             if (err) return res.status(400).send(err)
-            
+            console.log(user)
             // 토큰을 저장한다. 어디에 ? 쿠키, 로컬스토리지, 세션 ... 어디가 안전한가.... 논란이 많음... 각기 장단점이 있다.
             // 쿠키에 저장.  install cookie-parser --save
             res.cookie("x_auth", user.token)
@@ -129,17 +126,26 @@ app.get('/api/users/auth', auth, (req, res) => {
 })
 
 
-
-console.log(process.env.NODE_ENV)
 app.get('/api/users/logout', auth, (req, res) => {
-    const user = new User(req.body)
-    user.token = null
 
-    user.save((err, userInfo) => {
-        if (err) return res.json({ success: false, err })
-        return res.clearCookie('x_auth').status(200).json({ success: true })
-    })
+    // const user = new User(req.user)
+    // console.log(user)
+    // user.token = null
 
-    
+    // user.save((err, userInfo) => {
+    //     if (err) return res.json({ success: false, err })
+    //     return res.clearCookie('x_auth').status(200).json({ success: true })
+    // })
+
+    console.log(req.user)
+    User.findOneAndUpdate({ _id: req.user._id },
+        { token: "" }, 
+        (err, user) => {
+            if (err) return res.json({ success: false, err });
+            return res.clearCookie('x_auth').status(200).send({
+                success: true
+            }) 
+
+        })
 
 })
