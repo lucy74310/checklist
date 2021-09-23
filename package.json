@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "local": "set NODE_ENV=dev && nodemon ./server/index.js",
-    "prod": "set NODE_ENV=prod && node ./server/index.js"
-  },
+    "backend": "nodemon server/index.js",
+    "prod": "set NODE_ENV=prod && node ./server/index.js",
+    "dev": "concurrently \"npm run backend\" \"npm run start --prefix client\""
+  }, 
   "author": "",
   "license": "ISC",
   "dependencies": {
