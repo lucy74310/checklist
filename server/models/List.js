@@ -32,10 +32,7 @@ const mongoose = require('mongoose');
  * 
  */
 const listSchema = mongoose.Schema({
-    list_id: {
-        type: Number,
-    },
-    name: {
+    list_name: {
         type: String,
         maxlength: 50,
     },
@@ -51,7 +48,6 @@ const listSchema = mongoose.Schema({
     ins_timestamp: {
         type: TimeRanges
     }
-
-    
-
 })
+
+
