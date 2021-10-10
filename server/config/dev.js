@@ -1,4 +1,5 @@
 module.exports = {
-    mongoURI: 'mongodb+srv://bgjo:test1234!!@boiler-plate.zzxzr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-    encodeKEY: 'secretToken'
-}
+  mongoURI:
+    "mongodb+srv://root:test1234!!@checklist.f1daa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  encodeKEY: "secretToken",
+};

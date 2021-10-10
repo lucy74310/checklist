@@ -1,14 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 // cheklist
-
-/**
- * User
- * 
- * id
- * name
- * password
- */
 
 /**
  * List
@@ -16,38 +9,40 @@ const mongoose = require('mongoose');
  * user_id
  * days(목표일수)
  * is_done
- * 
+ *
  * list_no [primary key (unique)]
- * 
+ *
  */
 
 /**
  * Check
- * 
+ *
  * list_no
- * date 
+ * date
  * count
  * is_done
- * 
- * 
+ *
+ *
  */
-const listSchema = mongoose.Schema({
-    list_name: {
-        type: String,
-        maxlength: 50,
-    },
-    user_email: {
-        type: String
-    },
-    goal_days: {
-        type: Number
-    },
-    checked_days: {
-        type: Number
-    },
-    ins_timestamp: {
-        type: TimeRanges
-    }
-})
+const listSchema = Schema({
+  name: {
+    type: String,
+    maxlength: 50,
+  },
+  goal_count: {
+    type: Number,
+  },
+  ins_timestamp: {
+    type: Date,
+  },
+  update_timestamp: {
+    type: Date,
+  },
+  del_timestamp: {
+    type: Date,
+  },
+});
 
+const List = mongoose.model("List", listSchema);
 
+module.exports = { List };
