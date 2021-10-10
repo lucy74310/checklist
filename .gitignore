@@ -1,3 +1,4 @@
-config/dev.js
-config/prod.js
+server/config/dev.js
+server/config/prod.js
+client/node_modules
 node_modules
