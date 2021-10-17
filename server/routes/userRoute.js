@@ -1,16 +1,12 @@
 const express = require("express");
 
-const router = express.Router();
+const userRouter = express.Router();
 
 const { User } = require("../models/User");
 const { auth } = require("../middleware/auth");
 
-router.get("", (req, res) => {
-  res.send("Hello World!~~안녕하세요~");
-});
-
 /** 회원가입 **/
-router.post("/register", (req, res) => {
+userRouter.post("/register", (req, res) => {
   //회원가입할때 필요한 정보들을 client 에서 가져오면 그것들을 db에 넣어준다.
   // {
   //     id: "hell",
@@ -27,7 +23,7 @@ router.post("/register", (req, res) => {
 });
 
 /**로그인**/
-router.post("/login", (req, res) => {
+userRouter.post("/login", (req, res) => {
   // 1. DB안에서 요청된 EMAIL 찾기
   User.findOne(
     {
@@ -74,7 +70,7 @@ router.post("/login", (req, res) => {
 role 1 어드민 2 특정부서어드민
 role 0 일반유저 role 0아님 관리자 
  */
-router.get("/auth", auth, (req, res) => {
+userRouter.get("/auth", auth, (req, res) => {
   // 여기까지 middleware를 통과해 왔다는 얘기는 authentication이 True라는 뜻
   res.status(200).json({
     _id: req.user._id,
@@ -88,7 +84,7 @@ router.get("/auth", auth, (req, res) => {
   });
 });
 
-router.get("/logout", auth, (req, res) => {
+userRouter.get("/logout", auth, (req, res) => {
   // const user = new User(req.user)
   // console.log(user)
   // user.token = null
@@ -107,4 +103,6 @@ router.get("/logout", auth, (req, res) => {
   });
 });
 
-module.exports = router;
+module.exports = {
+  userRouter,
+};

@@ -11,9 +11,9 @@ const Schema = mongoose.Schema;
  *
  */
 const checkSchema = Schema({
-  Check_id: {
+  list_id: {
     type: Schema.Types.ObjectId,
-    ref: "Check",
+    ref: "List",
   },
 
   done: {

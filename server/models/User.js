@@ -34,7 +34,6 @@ const userSchema = Schema({
   tokenExp: {
     type: Number,
   },
-  lists: [{ type: Schema.Types.ObjectId, ref: "List" }],
 
   //   writer: {
   //     type: Schema.Types.ObjectId,

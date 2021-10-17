@@ -25,6 +25,10 @@ const Schema = mongoose.Schema;
  *
  */
 const listSchema = Schema({
+  user_id: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   name: {
     type: String,
     maxlength: 50,
@@ -34,12 +38,7 @@ const listSchema = Schema({
   },
   ins_timestamp: {
     type: Date,
-  },
-  update_timestamp: {
-    type: Date,
-  },
-  del_timestamp: {
-    type: Date,
+    default: Date.now,
   },
 });
 

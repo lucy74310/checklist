@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express();
 const port = 3001;
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 // application/x-www-form-urlencoded 타입으로 된것을 가져올 수 있게 해주는
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // application/json 타입 분석해서 가져올수 있게
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(express.json());
 
 // token 정보 쿠키에 저장하기 위해
 app.use(cookieParser());
@@ -21,21 +23,27 @@ const config = require("./config/key");
  * DELETE : 삭제
  */
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+const server = async () => {
+  try {
+    app.listen(port, () => {
+      console.log(`Example app listening at http://localhost:${port}`);
+    });
 
-const mongoose = require("mongoose");
-mongoose
-  .connect(config.mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Mongo DB Connected Successfully!"))
-  .catch((err) => console.log(err));
+    await mongoose.connect(config.mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Mongo DB Connected Sucessfully");
+    mongoose.set("debug", true);
 
-const usersRoutes = require("./routes/User");
-app.use("/api/user", usersRoutes);
+    const { userRouter } = require("./routes/userRoute");
+    app.use("/api/user", userRouter);
 
-const listsRoutes = require("./routes/List");
-app.use("/api/list", listsRoutes);
+    const { listRouter } = require("./routes/listRoute");
+    app.use("/api/list", listRouter);
+  } catch (err) {
+    console.log({ err });
+  }
+};
+
+server();
