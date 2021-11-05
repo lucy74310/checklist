@@ -1,35 +1,25 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-/**
- *
- * Check
- *
- * Check_id
- * order
- * content
- * is_done
- *
- */
-const checkSchema = Schema({
-  list_id: {
-    type: Schema.Types.ObjectId,
-    ref: "List",
-  },
+const {
+  Schema,
+  model,
+  Types: { ObjectId },
+} = require("mongoose");
 
-  done: {
-    type: Boolean,
+/*
+Check (One by One)
+*/
+const checkSchema = new Schema(
+  {
+    list_id: { type: ObjectId, ref: "list" },
+    user_id: { type: ObjectId, ref: "user" },
+    done: { type: Boolean, default: false },
+    num_in_list: { type: Number },
+    date: { type: Date },
+    content: { type: String },
+    order: { type: Number },
   },
-  order: {
-    type: Number,
-  },
-  date: {
-    type: Date,
-  },
-  content: {
-    type: String,
-  },
-});
+  { timestamps: true }
+);
 
-const Check = mongoose.model("Check", checkSchema);
+const Check = model("check", checkSchema);
 
 module.exports = { Check };

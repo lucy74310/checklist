@@ -1,47 +1,22 @@
-const mongoose = require("mongoose");
+const {
+  Schema,
+  model,
+  Types: { ObjectId },
+} = require("mongoose");
 const Schema = mongoose.Schema;
 
-// cheklist
+/*
+List
+*/
+const listSchema = new Schema(
+  {
+    user_id: { type: ObjectId, required: true, ref: "user" },
+    name: { type: String, required: true, maxlength: 50 },
+    goal_count: { type: Number, required: true },
+  },
+  { timestamps: true }
+);
 
-/**
- * List
- * name(리스트명)
- * user_id
- * days(목표일수)
- * is_done
- *
- * list_no [primary key (unique)]
- *
- */
-
-/**
- * Check
- *
- * list_no
- * date
- * count
- * is_done
- *
- *
- */
-const listSchema = Schema({
-  user_id: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  name: {
-    type: String,
-    maxlength: 50,
-  },
-  goal_count: {
-    type: Number,
-  },
-  ins_timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-const List = mongoose.model("List", listSchema);
+const List = model("list", listSchema);
 
 module.exports = { List };

@@ -4,6 +4,7 @@ const port = 3001;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const { userRoute, listRoute } = require("./routes");
 // application/x-www-form-urlencoded 타입으로 된것을 가져올 수 있게 해주는
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -36,11 +37,8 @@ const server = async () => {
     console.log("Mongo DB Connected Sucessfully");
     mongoose.set("debug", true);
 
-    const { userRouter } = require("./routes/userRoute");
-    app.use("/api/user", userRouter);
-
-    const { listRouter } = require("./routes/listRoute");
-    app.use("/api/list", listRouter);
+    app.use("/api/user", userRoute);
+    app.use("/api/list", listRoute);
   } catch (err) {
     console.log({ err });
   }

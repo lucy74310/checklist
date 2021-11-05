@@ -1,63 +1,95 @@
 const express = require("express");
-
-const listRouter = express.Router();
-
-const { User } = require("../models/User");
-const { List } = require("../models/List");
-const { Check } = require("../models/Check");
-
+const listRoute = express.Router();
+const { User, List, Check } = require("../models");
 const { auth } = require("../middleware/auth");
+const { isValidObjectId } = require("mongoose");
 
 /**
  * Get All Cheklist
  */
-listRouter.get("/", auth, (req, res) => {
-  console.log(req.user);
-  res.send("hello this is lists api~");
-  const getListQuery = List.find({ user_id: req.user._id });
-  const lists = await getListQuery;
-  console.log(lists);
+listRoute.get("/", auth, async (req, res) => {
+  try {
+    const lists = await List.find({ user_id: req.user._id });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ err: err.message });
+  }
 });
 
 /*
  * Get One Checklist
  */
-listRouter.get("/:listId", auth, async (req, res) => {
-  console.log(req.user);
-  const { listId } = req.params;
+listRoute.get("/:listId", auth, async (req, res) => {
+  try {
+    const { listId } = req.params;
 
-  const list = await List.findById(listId);
+    if (!isValidObjectId(listId))
+      return res.status(400).send({ err: "listId is not available" });
 
-  console.log(lists);
+    const list = await List.findOne({ _id: listId, user_id: req.user._id });
+
+    return res.send({ list });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ err: err.message });
+  }
 });
 
-/**
- * Create 체크리스트
- *
- * - Request Param
- * name
- * goal_count
- *
- */
+/*
+Create
+*/
 
-listRouter.post("/", auth, (req, res) => {
-  console.log(req.body);
-  console.log(req);
-  const list = new List({
-    name: req.body.name,
-    goal_count: req.body.goal_count,
-    user_id: req.user._id,
-  });
+listRoute.post("/", auth, async (req, res) => {
+  try {
+    const { name, goal_count } = req.body;
+    const user_id = req.user.id;
 
-  list.save((err, listInfo) => {
-    if (err) return res.json({ success: false, err });
+    if (typeof name !== "string")
+      return res.status(400).send({ err: "name is required" });
 
-    return res.json({
-      success: true,
-    });
-  });
+    if (typeof goal_count !== "number")
+      return res.status(400).send({ err: "goal_count is required" });
+
+    const list = new List({ name, goal_count, user_id });
+
+    await list.save();
+    return res.send({ list });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ err: err.message });
+  }
+});
+
+listRtoue.put("/:listId", auth, async (req, res) => {
+  try {
+    const { listId } = req.params;
+
+    if (!isValidObjectId(listId))
+      return res.status(400).send({ err: "listId is not available" });
+
+    const { name, goal_count } = req.body;
+
+    if (typeof name !== "string")
+      return res.status(400).send({ err: "name is required" });
+
+    if (typeof goal_count !== "number")
+      return res.status(400).send({ err: "goal_count is required" });
+
+    const list = await List.findOneAndUpdate(
+      listId,
+      { name, goal_count },
+      { new: true }
+    );
+
+    if (!list) return res.status(400).send({ err: "listId does not exist" });
+
+    return res.send({ list });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ err: err.message });
+  }
 });
 
 module.exports = {
-  listRouter,
+  listRoute,
 };

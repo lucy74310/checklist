@@ -1,29 +1,33 @@
 const express = require("express");
 
-const userRouter = express.Router();
+const userRoute = express.Router();
 
-const { User } = require("../models/User");
+const { User } = require("../models");
 const { auth } = require("../middleware/auth");
 
 /** 회원가입 **/
-userRouter.post("/register", (req, res) => {
+userRoute.post("/register", async (req, res) => {
   //회원가입할때 필요한 정보들을 client 에서 가져오면 그것들을 db에 넣어준다.
   // {
   //     id: "hell",
   //     password: "123"
   // }
 
-  const user = new User(req.body);
-  user.save((err, userInfo) => {
-    if (err) return res.json({ success: false, err });
-    return res.status(200).json({
-      success: true,
-    });
-  });
+  try {
+    const { email, password, name } = req.body;
+    if (!email || !password || !name)
+      return res.status(400).send("email, password, name are required");
+    const user = new User({ email, password, name });
+    await user.save();
+    return res.send({ user });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ err: err.message });
+  }
 });
 
 /**로그인**/
-userRouter.post("/login", (req, res) => {
+userRoute.post("/login", async (req, res) => {
   // 1. DB안에서 요청된 EMAIL 찾기
   User.findOne(
     {
@@ -70,7 +74,7 @@ userRouter.post("/login", (req, res) => {
 role 1 어드민 2 특정부서어드민
 role 0 일반유저 role 0아님 관리자 
  */
-userRouter.get("/auth", auth, (req, res) => {
+userRoute.get("/auth", auth, async (req, res) => {
   // 여기까지 middleware를 통과해 왔다는 얘기는 authentication이 True라는 뜻
   res.status(200).json({
     _id: req.user._id,
@@ -84,7 +88,7 @@ userRouter.get("/auth", auth, (req, res) => {
   });
 });
 
-userRouter.get("/logout", auth, (req, res) => {
+userRoute.get("/logout", auth, async (req, res) => {
   // const user = new User(req.user)
   // console.log(user)
   // user.token = null
@@ -94,7 +98,6 @@ userRouter.get("/logout", auth, (req, res) => {
   //     return res.clearCookie('x_auth').status(200).json({ success: true })
   // })
 
-  console.log(req.user);
   User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
     if (err) return res.json({ success: false, err });
     return res.clearCookie("x_auth").status(200).send({
@@ -104,5 +107,5 @@ userRouter.get("/logout", auth, (req, res) => {
 });
 
 module.exports = {
-  userRouter,
+  userRoute,
 };
