@@ -3,7 +3,6 @@ const {
   model,
   Types: { ObjectId },
 } = require("mongoose");
-const Schema = mongoose.Schema;
 
 /*
 List

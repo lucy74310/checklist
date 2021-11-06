@@ -21,7 +21,7 @@ const userSchema = new Schema({
 });
 
 //저장하기 전에
-userSchema.pre("save", async (next) {
+userSchema.pre("save", async (next) => {
   //비밀번호를 암호화 시킨다.
 
   try {
@@ -30,11 +30,11 @@ userSchema.pre("save", async (next) {
     if (await user.isModified("password")) {
       bcrypt.genSalt(saltRounds, function (err, salt) {
         if (err) return next(err);
-  
+
         bcrypt.hash(user.password, salt, function (err, hash) {
           if (err) return next(err);
           user.password = hash; // plain password를 hash 된 password로 변경
-  
+
           next();
         });
       });
@@ -42,9 +42,8 @@ userSchema.pre("save", async (next) {
       next();
     }
   } catch (err) {
-    next(err)
+    next(err);
   }
-  
 });
 
 userSchema.methods.comparePassword = function (plainPassword, cb) {

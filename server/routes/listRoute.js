@@ -60,7 +60,7 @@ listRoute.post("/", auth, async (req, res) => {
   }
 });
 
-listRtoue.put("/:listId", auth, async (req, res) => {
+listRoute.put("/:listId", auth, async (req, res) => {
   try {
     const { listId } = req.params;
 
