@@ -5,17 +5,26 @@ const {
 } = require("mongoose");
 
 /*
-List
+목표생성
 */
-const listSchema = new Schema(
+const ListSchema = new Schema(
   {
     user_id: { type: ObjectId, required: true, ref: "user" },
-    name: { type: String, required: true, maxlength: 50 },
+    title: { type: String, required: true, maxlength: 50 },
     goal_count: { type: Number, required: true },
+    done_count: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-const List = model("list", listSchema);
+ListSchema.virtual("todo", {
+  ref: "todo",
+  localField: "_id",
+  foreignField: "list_id",
+});
+
+ListSchema.set("toObject", { virtuals: true });
+ListSchema.set("toJson", { virtuals: true });
+const List = model("list", ListSchema);
 
 module.exports = { List };

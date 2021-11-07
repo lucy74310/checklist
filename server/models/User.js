@@ -4,7 +4,7 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 const config = require("../config/key");
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   name: { type: String, matlength: 50 },
   email: { type: String, trim: true, unique: 1 },
   password: { type: String, minlength: 4 },
@@ -21,7 +21,7 @@ const userSchema = new Schema({
 });
 
 //저장하기 전에
-userSchema.pre("save", async (next) => {
+UserSchema.pre("save", async (next) => {
   //비밀번호를 암호화 시킨다.
 
   try {
@@ -46,7 +46,7 @@ userSchema.pre("save", async (next) => {
   }
 });
 
-userSchema.methods.comparePassword = function (plainPassword, cb) {
+UserSchema.methods.comparePassword = function (plainPassword, cb) {
   // plainPassword 1234
   // hash $2b$10$TX.MfNVYZeOYppLVg2EI9urmDWW.Ckt9SaQuwg.3WHWvVWiuRZBta
   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
@@ -55,7 +55,7 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
   });
 };
 
-userSchema.methods.generateToken = function (cb) {
+UserSchema.methods.generateToken = function (cb) {
   var user = this;
   // json web token 을 이용해서 token을 생성하기
 

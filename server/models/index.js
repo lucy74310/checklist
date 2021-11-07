@@ -1,5 +1,5 @@
 module.exports = {
-  ...require("./Check"),
+  ...require("./Todo"),
   ...require("./List"),
   ...require("./User"),
 };
