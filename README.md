@@ -4,9 +4,8 @@
 
 ### List API
 
-1. POST:/list
-   (request)
-
+1. POST:/list  
+(request)  
 ```
 {
   "title": "팔뚝살 운동",
@@ -140,7 +139,7 @@
 }
 ```
 
-**PUT:/todo/{{id}}**
+**PUT:/todo/{{id}}**  
 (request)
 
 ```
@@ -153,8 +152,7 @@
 }
 ```
 
-**DELETE:/todo/{{id}}**
-
+**DELETE:/todo/{{id}}**  
 ```
 delte /todo/dfasdfsd
 ```
