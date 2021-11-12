@@ -198,9 +198,10 @@
   "day_order": 3,
   "goal_order": null
 }
-  ```
+```
 
 2. PATCH:/todo/{{id}} done 여부 업데이트
+
 (request)
 
   ```
@@ -221,6 +222,7 @@
     "goal_order": 1
   }
   ```
+
 
 4. DELETE:/todo/{{id}} 삭제
 
