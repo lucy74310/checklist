@@ -37,8 +37,8 @@ const server = async () => {
     console.log("Mongo DB Connected Sucessfully");
     mongoose.set("debug", true);
 
-    app.use("/api/user", userRoute);
-    app.use("/api/list", listRoute);
+    app.use("/user", userRoute);
+    app.use("/list", listRoute);
   } catch (err) {
     console.log({ err });
   }

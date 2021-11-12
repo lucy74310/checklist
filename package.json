@@ -7,7 +7,7 @@
     "backend": "nodemon server/index.js",
     "prod": "set NODE_ENV=prod && node ./server/index.js",
     "dev": "concurrently \"npm run backend\" \"npm run start --prefix client\""
-  }, 
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -17,6 +17,7 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
     "mongoose": "^6.0.4"
   },
   "devDependencies": {

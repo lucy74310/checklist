@@ -21,13 +21,13 @@ const UserSchema = new Schema({
 });
 
 //저장하기 전에
-UserSchema.pre("save", async (next) => {
+UserSchema.pre("save", function (next) {
   //비밀번호를 암호화 시킨다.
 
   try {
-    var user = this;
+    let user = this;
 
-    if (await user.isModified("password")) {
+    if (user.isModified("password")) {
       bcrypt.genSalt(saltRounds, function (err, salt) {
         if (err) return next(err);
 
@@ -46,26 +46,26 @@ UserSchema.pre("save", async (next) => {
   }
 });
 
-UserSchema.methods.comparePassword = function (plainPassword, cb) {
+UserSchema.methods.comparePassword = async function (plainPassword) {
   // plainPassword 1234
   // hash $2b$10$TX.MfNVYZeOYppLVg2EI9urmDWW.Ckt9SaQuwg.3WHWvVWiuRZBta
-  bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch); // isMatch는 이때 true
-  });
+  // const isMatch = await bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
+  //   if (err) return cb(err);
+  //   cb(null, isMatch); // isMatch는 이때 true
+  // });
+  const isMatch = await bcrypt.compare(plainPassword, this.password);
+
+  return isMatch;
 };
 
-UserSchema.methods.generateToken = function (cb) {
-  var user = this;
+UserSchema.methods.generateToken = async function () {
+  let user = this;
   // json web token 을 이용해서 token을 생성하기
 
-  var token = jwt.sign(user._id.toHexString(), config.encodeKEY); //user._id + encodeKEY => token && 나중에 token에 encodeKEY을 넣으면 user._id가 나옴
+  let token = jwt.sign(user._id.toHexString(), config.encodeKEY); //user._id + encodeKEY => token && 나중에 token에 encodeKEY을 넣으면 user._id가 나옴
 
   user.token = token;
-  user.save(function (err, user) {
-    if (err) return cb(err);
-    cb(null, user);
-  });
+  return await user.save();
 };
 
 /**
@@ -77,7 +77,7 @@ UserSchema.methods.generateToken = function (cb) {
  * 2.
  *
  */
-userSchema.statics.findByToken = function (token, cb) {
+UserSchema.statics.findByToken = function (token, cb) {
   var user = this;
 
   jwt.verify(token, config.encodeKEY, function (err, decoded) {
@@ -96,6 +96,6 @@ userSchema.statics.findByToken = function (token, cb) {
   });
 };
 
-const User = model("user", userSchema);
+const User = model("user", UserSchema);
 
 module.exports = { User };
