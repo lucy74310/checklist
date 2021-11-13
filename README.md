@@ -215,9 +215,7 @@
   {
     "title": "걷기 20분",
     "date": "2021-11-20",
-    "content": "잘했다. 좀만더",
-    "day_order": 5,
-    "goal_order": 1
+    "comment": "40분걸음.",
   }
   ```
 

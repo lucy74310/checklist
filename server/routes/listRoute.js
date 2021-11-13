@@ -43,9 +43,7 @@ listRoute.post("/", auth, async (req, res) => {
         date:
           type == "after"
             ? null
-            : new Date(
-                moment(start_date, "YYYY-MM-DD 00:00:00").add(addDays, "days")
-              ),
+            : new Date(moment(start_date, "YYYY-MM-DD").add(addDays, "days")),
         done: false,
         goal_order: i + 1,
         list_id: list._id,
@@ -53,7 +51,6 @@ listRoute.post("/", auth, async (req, res) => {
       });
       todoInsert.push(todo);
     }
-    console.log(todoInsert);
     const todo = await Todo.insertMany(todoInsert);
     const todo_id = todo.map((todo) => todo._id);
     list.todos = todo_id;
@@ -104,7 +101,7 @@ listRoute.get("/date/:date", auth, async (req, res) => {
         $gte: new Date(date + " 00:00:00"),
         $lte: new Date(date + " 23:59:59"),
       },
-    });
+    }).sort({ day_order: 1 });
     return res.json({ todos });
   } catch (err) {
     return res.status(500).send({ err: err.message });
@@ -207,7 +204,6 @@ listRoute.put("/:listId", auth, async (req, res) => {
 
     return res.send({ list });
   } catch (err) {
-    console.log(err);
     return res.status(500).send({ err: err.message });
   }
 });
