@@ -4,6 +4,7 @@ const { Todo } = require("../models");
 const { auth } = require("../middleware/auth");
 const { isValidObjectId } = require("mongoose");
 
+// POST:/todo 생성
 todoRoute.post("/", auth, async (req, res) => {
   try {
     const { title, date, comment, day_order } = req.body;
@@ -25,6 +26,7 @@ todoRoute.post("/", auth, async (req, res) => {
   }
 });
 
+// PATCH:/todo/:todoId 순서, done 변경
 todoRoute.patch("/:todoId", auth, async (req, res) => {
   try {
     const { todoId } = req.params;
@@ -42,6 +44,7 @@ todoRoute.patch("/:todoId", auth, async (req, res) => {
   }
 });
 
+// PUT:/todo/:todoId 제목, 날짜, 코멘트 변경
 todoRoute.put("/:todoId", auth, async (req, res) => {
   try {
     const { todoId } = req.params;
