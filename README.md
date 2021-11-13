@@ -169,20 +169,18 @@
    (response)
    ```
    {
-     "month": [
-         {
-         "day": "1",
-         "count": 10 // 총등록 todo 갯수
-         "done_count": 8 // 그중 성공한거
-         "all_done": false
-         },
-         {
-         "day": "2",
-         "count": 10 // 총등록 todo 갯수
-         "done_count": 8 // 그중 성공한거
-         "all_done": false
-         },
-     ]
+    "month": {
+        "2021-10-14": {
+            "count": 5,
+            "done_count": 1,
+            "all_done": false
+        },
+        "2021-10-15": {
+            "count": 5,
+            "done_count": 1,
+            "all_done": false
+        }
+    }
    }
    ```
 

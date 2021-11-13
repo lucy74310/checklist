@@ -20,9 +20,9 @@ listRoute.post("/", auth, async (req, res) => {
     if (typeof type !== "string")
       return res.status(400).send({ err: "type is required" });
 
-    // list save
+    // list
     let list = new List({ ...req.body, user_id });
-    await list.save();
+
     // todo save
     let interval = 0;
     let todoInsert = [];
@@ -53,9 +53,11 @@ listRoute.post("/", auth, async (req, res) => {
       });
       todoInsert.push(todo);
     }
-    const todos = await Todo.insertMany(todoInsert);
-    const todos_id = todos.map((todo) => todo._id);
-    List.findOneAndUpdate({ _id: list._id }, { todos: todos_id });
+    console.log(todoInsert);
+    const todo = await Todo.insertMany(todoInsert);
+    const todo_id = todo.map((todo) => todo._id);
+    list.todos = todo_id;
+    await list.save();
 
     return res.send({ list });
   } catch (err) {
@@ -114,29 +116,71 @@ listRoute.get("/month/:yearMonth", auth, async (req, res) => {
   try {
     let { yearMonth } = req.params;
     yearMonth = yearMonth.split("-");
-    const year = parseInt(yearMonth[0]);
-    const month = parseInt(yearMonth[1]);
-    if (year < 1970 || year > 2100)
+    const inputYear = parseInt(yearMonth[0]);
+    const inputMonth = parseInt(yearMonth[1]);
+    if (inputYear < 1970 || inputYear > 2100)
       return res.status(400).json({ err: "Invalid year." });
-    if (month < 1 || month > 12)
+    if (inputMonth < 1 || inputMonth > 12)
       return res.status(400).json({ err: "Invalid month." });
 
-    const days = new Date(year, month, 0).getDate(); // 0 은 전달의 마지막날을 반환하는데 month는 0부터 1월이므로 2021,12,0 하면 12월의 마지막 날을 반환한다.
-
-    let test = await Todo.aggregate([
+    const startDate = new Date(inputYear, inputMonth - 1, 1);
+    const endDate = new Date(inputYear, inputMonth, 0, 23, 59, 59);
+    let todo_all = await Todo.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
       {
         $group: {
-          _id: "$date",
-          count: { $sum: 1 },
+          _id: {
+            date: "$date",
+            done: "$done",
+          },
+          doneCount: { $sum: 1 },
         },
-        $project: {},
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          done_result: {
+            $push: {
+              done: "$_id.done",
+              count: "$doneCount",
+            },
+          },
+          count: { $sum: "$doneCount" },
+        },
+      },
+      {
+        $sort: {
+          date: 1,
+          done: 1,
+        },
       },
     ]);
+    let month = {};
+    let dateString;
+    for (let i = 0; i < todo_all.length; i++) {
+      dateString = moment(todo_all[i]._id).format("YYYY-MM-DD");
+      month[dateString] = {
+        count: todo_all[i].count,
+        done_count: null,
+        all_done: false,
+      };
+      for (let done_result of todo_all[i].done_result) {
+        if (done_result.done === true) {
+          month[dateString].done_count = done_result.count;
+          month[dateString].all_done =
+            done_result.count === month[dateString].count ? true : false;
+        }
+      }
+    }
 
-    // for (let i = 0; i < days; i++) {
-    //   Todo.aggregate([{ $group: "$date" }]);
-    // }
-    return res.json({ test });
+    return res.json({ month });
   } catch (err) {
     return res.status(500).send({ err: err.message });
   }
